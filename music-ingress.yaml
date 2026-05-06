@@ -1,0 +1,22 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: mausic-ingress
+spec:
+  rules:
+  - http:
+      paths:
+      - path: /api # Semua traffic ke /api masuk ke Backend
+        pathType: Prefix
+        backend:
+          service:
+            name: backend-service
+            port:
+              number: 5000
+      - path: /    # Traffic utama masuk ke Frontend
+        pathType: Prefix
+        backend:
+          service:
+            name: frontend-service
+            port:
+              number: 80
