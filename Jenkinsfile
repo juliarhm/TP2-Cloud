@@ -14,24 +14,24 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-login', passwordVariable: 'PASS', usernameVariable: 'USER_VAR')]) {
                     // Build image backend dan frontend
-                    bat "docker build -t ${DOCKER_USER}/emusic-backend:latest ./backend"
-                    bat "docker build -t ${DOCKER_USER}/emusic-frontend:latest ./frontend"
+                    sh "docker build -t ${DOCKER_USER}/emusic-backend:latest ./backend"
+                    sh "docker build -t ${DOCKER_USER}/emusic-frontend:latest ./frontend"
                     
                     // Login ke Docker Hub menggunakan parameter -p (lebih stabil di Windows)
-                    bat "docker login -u ${DOCKER_USER} -p ${PASS}"
+                    sh "echo ${PASS} | docker login -u ${USER_VAR} --password-stdin"
                     
                     // Push image ke Docker Hub
-                    bat "docker push ${DOCKER_USER}/emusic-backend:latest"
-                    bat "docker push ${DOCKER_USER}/emusic-frontend:latest"
+                    sh "docker push ${DOCKER_USER}/emusic-backend:latest"
+                    sh "docker push ${DOCKER_USER}/emusic-frontend:latest"
                 }
             }
         }
         stage('Deploy ke Azure AKS') {
             steps {
                 withKubeConfig([credentialsId: 'aks-config']) {
-                    bat "kubectl apply -f emusic-k8s.yaml"
-                    bat "kubectl rollout restart deployment backend-emusic"
-                    bat "kubectl rollout restart deployment frontend-emusic"
+                    sh "kubectl apply -f emusic-k8s.yaml"
+                    sh "kubectl rollout restart deployment backend-emusic"
+                    sh "kubectl rollout restart deployment frontend-emusic"
                 }
             }
         }
