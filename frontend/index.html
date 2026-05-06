@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Katalog Musik K-Pop</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background-color: #f0f8ff;
+            margin-top: 50px;
+        }
+
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            display: inline-block;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+            min-width: 350px;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        ul {
+            text-align: left;
+            margin-bottom: 20px;
+            padding-left: 20px;
+        }
+
+        li {
+            padding: 5px 0;
+            border-bottom: 1px solid #eee;
+            color: #444;
+        }
+
+        input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 70%;
+            margin-bottom: 10px;
+        }
+
+        button {
+            padding: 10px 20px;
+            background-color: #0078d4;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        button:hover {
+            background-color: #005a9e;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="card">
+        <h1 id="judul">Memuat Katalog...</h1>
+        <p>Owner: <span id="owner">...</span> (<span id="nim">...</span>)</p>
+
+        <ul id="item-list"></ul>
+
+        <input type="text" id="new-item" placeholder="Tambah Album baru...">
+        <button onclick="addItem()">Tambah</button>
+    </div>
+
+    <script>
+        // Alamat dasar Backend Julia di Azure
+        const BASE_URL = 'http://api-music-julia.southeastasia.azurecontainer.io:5000/api';
+
+        // Fungsi untuk mengambil data (GET)
+        function loadData() {
+            console.log("Mengambil data dari:", `${BASE_URL}/info`);
+
+            fetch(`${BASE_URL}/info`)
+                .then(res => {
+                    if (!res.ok) throw new Error("Gagal mengambil data");
+                    return res.json();
+                })
+                .then(data => {
+                    document.getElementById('judul').innerText = data.judul_katalog;
+                    document.getElementById('owner').innerText = data.pemilik;
+                    document.getElementById('nim').innerText = data.nim;
+
+                    const list = document.getElementById('item-list');
+                    list.innerHTML = ''; // Kosongkan list sebelum diisi ulang
+
+                    data.items.forEach(item => {
+                        let li = document.createElement('li');
+                        li.innerText = item;
+                        list.appendChild(li);
+                    });
+                })
+                .catch(err => console.error("Error loadData:", err));
+        }
+
+        function addItem() {
+                const val = document.getElementById('new-item').value;
+                if (!val) return;
+
+                // Pakai alamat dasar tanpa /info
+                const ADD_URL = 'http://api-music-julia.southeastasia.azurecontainer.io:5000/api/add-item';
+
+                fetch(ADD_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ item: val })
+                })
+                    .then(res => {
+                        if (res.ok) {
+                            loadData(); // Segarkan daftar
+                            document.getElementById('new-item').value = '';
+                        } else {
+                            alert("Gagal menambah! Status: " + res.status);
+                        }
+                    })
+                    .catch(err => console.error("Error:", err));
+            }
+
+        // Jalankan fungsi saat halaman pertama kali dibuka
+        loadData();
+    </script>
+</body>
+
+</html>
