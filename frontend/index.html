@@ -80,7 +80,7 @@
 
     <script>
         // Alamat dasar Backend Julia di Azure
-        const API_URL = '/api';
+        const API_URL = 'http://20.212.140.150/api';
 
         // Fungsi untuk mengambil data (GET)
         function loadData() {
@@ -113,7 +113,7 @@
                 if (!val) return;
 
                 // Pakai alamat dasar tanpa /info
-                const ADD_URL = '/api/add-item';
+                const ADD_URL = `${API_URL}/add-item`;
 
                 fetch(ADD_URL, {
                     method: 'POST',
