@@ -1,5 +1,0 @@
-backend
-"fqdn": "api-music-julia.southeastasia.azurecontainer.io",
-
-frontend
-music-julia-web.southeastasia.azurecontainer.io

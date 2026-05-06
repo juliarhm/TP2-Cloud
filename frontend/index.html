@@ -80,13 +80,13 @@
 
     <script>
         // Alamat dasar Backend Julia di Azure
-        const BASE_URL = 'http://api-music-julia.southeastasia.azurecontainer.io:5000/api';
+        const API_URL = '/api';
 
         // Fungsi untuk mengambil data (GET)
         function loadData() {
-            console.log("Mengambil data dari:", `${BASE_URL}/info`);
+            console.log("Mengambil data dari:", `${API_URL}/info`);
 
-            fetch(`${BASE_URL}/info`)
+            fetch(`${API_URL}/info`)
                 .then(res => {
                     if (!res.ok) throw new Error("Gagal mengambil data");
                     return res.json();
@@ -113,7 +113,7 @@
                 if (!val) return;
 
                 // Pakai alamat dasar tanpa /info
-                const ADD_URL = 'http://api-music-julia.southeastasia.azurecontainer.io:5000/api/add-item';
+                const ADD_URL = '/api/add-item';
 
                 fetch(ADD_URL, {
                     method: 'POST',
