@@ -7,7 +7,7 @@ pipeline {
     stages {
         stage('Checkout Code') {
             steps {
-                git branch: 'main', url: "${https://github.com/juliarhm/TP2-Cloud.git}"
+                git branch: 'main', url: "${GIT_REPO_URL}"
             }
         }
         stage('Build & Push Docker Image') {
