@@ -12,14 +12,17 @@ pipeline {
         }
         stage('Build & Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-login', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-login', passwordVariable: 'PASS', usernameVariable: 'USER_VAR')]) {
                     // Build image backend dan frontend
-                    bat "docker build -t ${USER}/emusic-backend:latest ./backend"
-                    bat "docker build -t ${USER}/emusic-frontend:latest ./frontend"
+                    bat "docker build -t ${DOCKER_USER}/emusic-backend:latest ./backend"
+                    bat "docker build -t ${DOCKER_USER}/emusic-frontend:latest ./frontend"
                     
-                    bat "echo ${PASS} | docker login -u ${USER} --password-stdin"
-                    bat "docker push ${USER}/emusic-backend:latest"
-                    bat "docker push ${USER}/emusic-frontend:latest"
+                    // Login ke Docker Hub menggunakan parameter -p (lebih stabil di Windows)
+                    bat "docker login -u ${DOCKER_USER} -p ${PASS}"
+                    
+                    // Push image ke Docker Hub
+                    bat "docker push ${DOCKER_USER}/emusic-backend:latest"
+                    bat "docker push ${DOCKER_USER}/emusic-frontend:latest"
                 }
             }
         }
