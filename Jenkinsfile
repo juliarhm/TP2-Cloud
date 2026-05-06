@@ -14,21 +14,21 @@ pipeline {
             steps {
                 withCredentials([usernamePassword(credentialsId: 'dockerhub-login', passwordVariable: 'PASS', usernameVariable: 'USER')]) {
                     // Build image backend dan frontend
-                    sh "docker build -t ${USER}/emusic-backend:latest ./backend"
-                    sh "docker build -t ${USER}/emusic-frontend:latest ./frontend"
+                    bat "docker build -t ${USER}/emusic-backend:latest ./backend"
+                    bat "docker build -t ${USER}/emusic-frontend:latest ./frontend"
                     
-                    sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
-                    sh "docker push ${USER}/emusic-backend:latest"
-                    sh "docker push ${USER}/emusic-frontend:latest"
+                    bat "echo ${PASS} | docker login -u ${USER} --password-stdin"
+                    bat "docker push ${USER}/emusic-backend:latest"
+                    bat "docker push ${USER}/emusic-frontend:latest"
                 }
             }
         }
         stage('Deploy ke Azure AKS') {
             steps {
                 withKubeConfig([credentialsId: 'aks-config']) {
-                    sh "kubectl apply -f emusic-k8s.yaml"
-                    sh "kubectl rollout restart deployment backend-emusic"
-                    sh "kubectl rollout restart deployment frontend-emusic"
+                    bat "kubectl apply -f emusic-k8s.yaml"
+                    bat "kubectl rollout restart deployment backend-emusic"
+                    bat "kubectl rollout restart deployment frontend-emusic"
                 }
             }
         }
