@@ -2,18 +2,21 @@ apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
   name: mausic-ingress
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
+  ingressClassName: nginx
   rules:
   - http:
       paths:
-      - path: /api # Semua traffic ke /api masuk ke Backend
+      - path: /api
         pathType: Prefix
         backend:
           service:
             name: backend-service
             port:
               number: 5000
-      - path: /    # Traffic utama masuk ke Frontend
+      - path: /
         pathType: Prefix
         backend:
           service:
